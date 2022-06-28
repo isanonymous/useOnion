@@ -1,0 +1,26 @@
+{
+  "name": "use-onion",
+  "version": "0.0.1",
+  "description": "在任意函数上使用洋葱模型",
+  "main": "dist/use-onion.umd.js",
+  "scripts": {
+    "build": "rollup -c --environment NODE_ENV:production",
+    "serve": "rollup -c -w --environment NODE_ENV:development",
+    "test": "mocha"
+  },
+  "keywords": ["fn-util", "middleware", "koa-compose"],
+  "author": "zzyygg",
+  "files": ["dist", "src", "test", "index.html"],
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "mocha": "^10.0.0",
+    "rollup": "^2.75.7",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}

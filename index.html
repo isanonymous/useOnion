@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="dist/use-onion.umd.js"></script>
+</head>
+<body>
+<script>
+  let ctx = {
+    table:{data:[], total:null}
+  }
+  let customHook = {
+    getName(ctx, next){
+      let find = ctx.table.data.find(obj=>obj.id===1);
+      console.log("---find.name---", find.name);
+      next()
+    },
+    onerror(err){
+      console.log("---err---", err);
+      ctx.err = err
+    }
+  }
+  let hooks = useOnion(ctx, {customHook})
+  hooks.getName().then(null, ()=>{
+    ctx.table.data.push({id:1, name:'报错之后'})
+    hooks.getName()
+  })
+</script>
+</body>
+</html>
