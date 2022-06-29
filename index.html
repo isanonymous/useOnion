@@ -7,17 +7,47 @@
 </head>
 <body>
 <script>
+  // 以提交表单前的数据处理为例, 对title进行trim
+  // import useOnion from 'use-onion'
+  let {curr_base_hook} = useOnion
+  const ctx = {
+    form:{
+      data:{ title:'  标题 ' }
+    },
+    table:{ data:[] }
+  }
+  const customHook = {
+    onSubmit: [
+      async (ctx, next)=>{
+        let formData = ctx.form.data;
+        formData.title = formData.title.trim()
+        await next()
+      },
+      curr_base_hook
+    ]
+  }
+  const baseHook = {
+    onSubmit: async (ctx, next)=>{
+      console.log('提交成功', ctx.form.data);
+      await next()
+    }
+  }
+  const hooks = useOnion(ctx, {customHook, baseHook})
+  // "提交成功"后面对象的title已经被trim了
+  hooks.onSubmit()
+</script>
+<!--<script>
   let ctx = {
     table:{data:[], total:null}
   }
   let customHook = {
     getName(ctx, next){
       let find = ctx.table.data.find(obj=>obj.id===1);
-      console.log("---find.name---", find.name);
+      console.log("-&#45;&#45;find.name-&#45;&#45;", find.name);
       next()
     },
     onerror(err){
-      console.log("---err---", err);
+      console.log("-&#45;&#45;err-&#45;&#45;", err);
       ctx.err = err
     }
   }
@@ -26,6 +56,6 @@
     ctx.table.data.push({id:1, name:'报错之后'})
     hooks.getName()
   })
-</script>
+</script>-->
 </body>
 </html>
