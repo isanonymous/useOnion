@@ -1,4 +1,5 @@
 import useOnion, {curr_base_hook} from '../src/main.js'
+import {getSyncMidware} from '../src/index.js'
 import assert from 'assert'
 
 let getMocks = ()=>{
@@ -115,5 +116,35 @@ let getBaseHook = (getResponse)=> ({
       await hooks.getName()
       assert.strictEqual( Boolean(ctx.err), true)
       assert.strictEqual( ctx.err instanceof Error, true)
+    })
+
+    let array_ch_self_fns = ['push','pop','shift','unshift','splice','sort','reverse'];
+    it('用syncFnNames来指定同步的中间件', ()=>{
+      let arr = []
+      let origin_proto = Object.getPrototypeOf(arr)
+      // let proto = {}
+      let customHook = {}
+      let logArgs = (ctx, next)=>{console.log(ctx.args);next()};
+      for( let fnName of array_ch_self_fns){
+        customHook[fnName] = [logArgs
+          , getSyncMidware(ctx=>{origin_proto[fnName].apply(arr, ctx.args)})
+        ]
+      }
+      let proto = useOnion({}, {baseHook:origin_proto,
+        customHook,
+        syncFnNames:array_ch_self_fns,
+        hasArgFnNames:array_ch_self_fns
+      })
+      /*for( let fnName of array_ch_self_fns){
+        proto[fnName] = hooks[fnName]
+      }*/
+      Object.setPrototypeOf(proto, origin_proto)
+      Object.setPrototypeOf(arr, proto)
+      arr.push(1,3)
+      assert.deepStrictEqual([...arr], [1,3])
+      arr.push(2,3,3)
+      assert.deepStrictEqual([...arr], [1,3, 2,3,3])
+      arr.splice(0,2)
+      assert.deepStrictEqual([...arr], [2,3,3])
     })
   })
